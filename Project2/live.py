@@ -129,7 +129,6 @@ def main() -> None:
                 if move:
                     move = not move
                     print("Ruch trwa")
-                
             else:
                 steady += 1
                 if steady >= 25:

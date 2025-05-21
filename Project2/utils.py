@@ -1,7 +1,5 @@
 import cv2
-import matplotlib.pyplot as plt
 import numpy as np
-from PIL import Image
 
 def threshold(image, low=0, high=255):
     val_1 = cv2.threshold(image, low, 255, cv2.THRESH_BINARY)[1]
