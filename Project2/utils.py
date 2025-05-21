@@ -40,7 +40,7 @@ def ball_separator(image, color):
         case "brown":
             sep_1 = threshold(image[:,:,2], 60, 250)
             sep_2 = cv2.threshold(cv2.cvtColor(image, cv2.COLOR_RGB2GRAY), 100, 255, cv2.THRESH_BINARY_INV)[1]
-            sep_3 = threshold(image[:,:,1], 85, 160)
+            sep_3 = threshold(image[:,:,1], 65, 160)
             return cv2.morphologyEx(cv2.bitwise_and(cv2.bitwise_and(sep_1,sep_2), sep_3), cv2.MORPH_OPEN, kernel=np.ones((3,3)))
         case _:
             raise ValueError
