@@ -5,7 +5,7 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 from torch.utils.data import random_split, DataLoader
 from PIL import Image
-from torch.nn import Conv2d, MaxPool2d, ReLU, Sequential, ConvTranspose2d, Sigmoid, BatchNorm2d
+from torch.nn import Conv2d, MaxPool2d, ReLU, Sequential, ConvTranspose2d, Sigmoid, BatchNorm2d, Upsample
 from pytorch_msssim import ssim
 from enum import Enum
 
@@ -99,10 +99,21 @@ class LightingModel(L.LightningModule):
         )
 
         self.decoder = Sequential(
-            ConvTranspose2d(128, 64, kernel_size=2, stride=2),   # 64x64x64
+            # Upsample
+            # ConvTranspose2d(128, 64, kernel_size=2, stride=2),   # 64x64x64
+            # BatchNorm2d(64),
+            # ReLU(),
+            # ConvTranspose2d(64, 3, kernel_size=2, stride=2),     # 3x128x128
+            # Sigmoid(),  # HSV in [0,1]
+            
+            # Upsample to remove checkboard artifacts
+            # można nearest -> bilinear: lepsza jakość bo patrzy w sąsiedztwie a nie tylko najbliższy ale wolniejsze
+            Upsample(scale_factor=2, mode='nearest'),
+            Conv2d(128, 64, kernel_size=3, padding=1),
             ReLU(),
-            ConvTranspose2d(64, 3, kernel_size=2, stride=2),     # 3x128x128
-            Sigmoid(),  # HSV in [0,1]
+            Upsample(scale_factor=2, mode='nearest'),
+            Conv2d(64, 3, kernel_size=3, padding=1),
+            Sigmoid(), # HSV in [0,1]
         )
         
         self.loss_fn = loss_fn
